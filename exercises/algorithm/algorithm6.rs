@@ -1,78 +1,108 @@
 /*
-	dfs
-	This problem requires you to implement a basic DFS traversal
+	stack
+	This question requires you to use a stack to achieve a bracket match
 */
 
-// I AM NOT DONE
-use std::collections::HashSet;
-
-struct Graph {
-    adj: Vec<Vec<usize>>, 
+// 
+#[derive(Debug)]
+struct Stack<T> {
+    data: Vec<T>,
 }
 
-impl Graph {
-    fn new(n: usize) -> Self {
-        Graph {
-            adj: vec![vec![]; n],
+impl<T> Stack<T> {
+    fn new() -> Self {
+        Self { data: Vec::new() }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.data.is_empty()
+    }
+
+    fn len(&self) -> usize {
+        self.data.len()
+    }
+
+    fn clear(&mut self) {
+        self.data.clear();
+    }
+
+    fn push(&mut self, val: T) {
+        self.data.push(val);
+    }
+
+    fn pop(&mut self) -> Option<T> {
+        self.data.pop()
+    }
+
+    fn peek(&self) -> Option<&T> {
+        self.data.last()
+    }
+
+    fn peek_mut(&mut self) -> Option<&mut T> {
+        self.data.last_mut()
+    }
+}
+
+fn bracket_match(bracket: &str) -> bool {
+    let mut stack = Stack::new();
+    for c in bracket.chars() {
+        match c {
+            '(' | '{' | '[' => stack.push(c),
+            ')' => {
+                if stack.pop() != Some('(') {
+                    return false;
+                }
+            }
+            '}' => {
+                if stack.pop() != Some('{') {
+                    return false;
+                }
+            }
+            ']' => {
+                if stack.pop() != Some('[') {
+                    return false;
+                }
+            }
+            _ => {}
         }
     }
 
-    fn add_edge(&mut self, src: usize, dest: usize) {
-        self.adj[src].push(dest);
-        self.adj[dest].push(src); 
-    }
-
-    fn dfs_util(&self, v: usize, visited: &mut HashSet<usize>, visit_order: &mut Vec<usize>) {
-        //TODO
-    }
-
-    // Perform a depth-first search on the graph, return the order of visited nodes
-    fn dfs(&self, start: usize) -> Vec<usize> {
-        let mut visited = HashSet::new();
-        let mut visit_order = Vec::new(); 
-        self.dfs_util(start, &mut visited, &mut visit_order);
-        visit_order
-    }
+    stack.is_empty()
 }
+
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
-    #[test]
-    fn test_dfs_simple() {
-        let mut graph = Graph::new(3);
-        graph.add_edge(0, 1);
-        graph.add_edge(1, 2);
-
-        let visit_order = graph.dfs(0);
-        assert_eq!(visit_order, vec![0, 1, 2]);
-    }
-
-    #[test]
-    fn test_dfs_with_cycle() {
-        let mut graph = Graph::new(4);
-        graph.add_edge(0, 1);
-        graph.add_edge(0, 2);
-        graph.add_edge(1, 2);
-        graph.add_edge(2, 3);
-        graph.add_edge(3, 3); 
-
-        let visit_order = graph.dfs(0);
-        assert_eq!(visit_order, vec![0, 1, 2, 3]);
-    }
-
-    #[test]
-    fn test_dfs_disconnected_graph() {
-        let mut graph = Graph::new(5);
-        graph.add_edge(0, 1);
-        graph.add_edge(0, 2);
-        graph.add_edge(3, 4); 
-
-        let visit_order = graph.dfs(0);
-        assert_eq!(visit_order, vec![0, 1, 2]); 
-        let visit_order_disconnected = graph.dfs(3);
-        assert_eq!(visit_order_disconnected, vec![3, 4]); 
-    }
+	use super::*;
+	
+	#[test]
+	fn bracket_matching_1(){
+		let s = "(2+3){func}[abc]";
+		assert_eq!(bracket_match(s),true);
+	}
+	#[test]
+	fn bracket_matching_2(){
+		let s = "(2+3)*(3-1";
+		assert_eq!(bracket_match(s),false);
+	}
+	#[test]
+	fn bracket_matching_3(){
+		let s = "{{([])}}";
+		assert_eq!(bracket_match(s),true);
+	}
+	#[test]
+	fn bracket_matching_4(){
+		let s = "{{(}[)]}";
+		assert_eq!(bracket_match(s),false);
+	}
+	#[test]
+	fn bracket_matching_5(){
+		let s = "[[[]]]]]]]]]";
+		assert_eq!(bracket_match(s),false);
+	}
+	#[test]
+	fn bracket_matching_6(){
+		let s = "";
+		assert_eq!(bracket_match(s),true);
+	}
 }
-

@@ -1,17 +1,24 @@
-// tests2.rs
-//
-// This test has a problem with it -- make the test compile! Make the test pass!
-// Make the test fail!
-//
-// Execute `rustlings hint tests2` or use the `hint` watch subcommand for a
-// hint.
+// Tests are important to ensure that your code does what you think it should
+// do.
 
-// I AM NOT DONE
+pub fn is_even(n: i64) -> bool {
+    n % 2 == 0
+}
+
+fn main() {
+    // You can optionally experiment here.
+}
 
 #[cfg(test)]
 mod tests {
+    // TODO: Import `is_even`. You can use a wildcard to import everything in
+    // the outer module.
+    use super::*;
+
     #[test]
-    fn you_can_assert_eq() {
-        assert_eq!();
+    fn you_can_assert() {
+        // TODO: Test the function `is_even` with some values.
+        assert!(is_even(2));
+        assert!(!is_even(1));
     }
 }
